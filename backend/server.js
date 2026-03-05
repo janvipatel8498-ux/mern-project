@@ -70,22 +70,19 @@ app.get('/api/config/razorpay', (req, res) =>
 
 // Serve Static Assets in Production
 if (process.env.NODE_ENV === 'production') {
-    // Set static folder
+
     app.use(express.static(path.join(__dirname, '/frontend/dist')));
 
-    // Any route that is not API will serve index.html
-    app.use((req, res) => {
-  res.status(404).send("Route not found");
-});
-        if (!req.path.startsWith('/api')) {
-            res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
-        }
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
     });
+
 } else {
-    // Basic route for development
+
     app.get('/', (req, res) => {
         res.send('FreshMart API is running...');
     });
+
 }
 
 // Error handling middleware
