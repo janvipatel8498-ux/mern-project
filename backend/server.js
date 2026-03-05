@@ -24,10 +24,24 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({
-    origin: 'http://localhost:5173', // Vite default port
+const allowedOrigins = [
+    'https://mern-project-f1de.onrender.com',
+    'https://mern-project-ij3crx109-janvipatel8498-uxs-projects.vercel.app',
+    'http://localhost:5173',
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
-}));
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -35,11 +49,6 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
-
-// Basic route
-app.get('/', (req, res) => {
-    res.send('FreshMart API is running...');
-});
 
 // Setup Routes
 app.use('/api/auth', authRoutes);
@@ -58,6 +67,24 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.get('/api/config/razorpay', (req, res) =>
     res.send({ clientId: process.env.RAZORPAY_KEY_ID })
 );
+
+// Serve Static Assets in Production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
+    // Any route that is not API will serve index.html
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+            res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+        }
+    });
+} else {
+    // Basic route for development
+    app.get('/', (req, res) => {
+        res.send('FreshMart API is running...');
+    });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
