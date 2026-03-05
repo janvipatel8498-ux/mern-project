@@ -19,7 +19,7 @@ const store = configureStore({
         tickets: ticketReducer,
         contactTickets: contactTicketReducer,
     },
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: import.meta.env.MODE !== 'production',
 });
 
 export default store;
