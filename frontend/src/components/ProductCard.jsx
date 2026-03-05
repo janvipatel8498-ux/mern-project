@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
                     src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=FreshMart+Image' }}
+                    onError={(e) => { e.target.src = '/images/placeholder.png' }}}
                 />
                 {product.countInStock === 0 && (
                     <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
