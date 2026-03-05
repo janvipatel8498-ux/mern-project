@@ -55,7 +55,7 @@ const ProductDetailsPage = () => {
                                 src={product.image}
                                 alt={product.name}
                                 className="w-full h-auto object-cover rounded-2xl"
-                                onError={(e) => { e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Found' }}
+                                onError={(e) => { e.target.src = '/images/placeholder.png' }}
                             />
                             {product.countInStock === 0 && (
                                 <div className="absolute top-8 right-8 bg-red-500 text-white text-lg font-bold px-4 py-2 rounded-lg transform rotate-12 shadow-lg">
