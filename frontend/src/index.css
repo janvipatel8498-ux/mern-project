@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-200;
+  }
+  
+  /* Dark mode */
+  .dark body {
+    @apply bg-dark-bg text-gray-100;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply px-4 py-2 bg-white text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-300 font-medium dark:bg-dark-surface dark:text-gray-200 dark:border-dark-border dark:hover:bg-gray-800;
+  }
+  .input-field {
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 dark:bg-dark-surface dark:border-dark-border dark:text-white dark:focus:ring-primary-400;
+  }
+  .card {
+     @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6 dark:bg-dark-surface dark:border-dark-border;
+  }
+  .glass {
+     @apply bg-white/70 backdrop-blur-lg border border-white/20 dark:bg-dark-surface/70 dark:border-gray-700/30;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full dark:bg-gray-700;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
+}
