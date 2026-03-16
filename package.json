@@ -1,10 +1,15 @@
 {
   "name": "mern-project-root",
   "version": "1.0.0",
-  "description": "Root for MERN Project",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "build": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend",
-    "start": "npm start --prefix backend"
+    "install-all": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "build": "npm run build --prefix frontend",
+    "start": "npm start --prefix backend",
+    "render-build": "npm install && npm run build --prefix frontend"
   }
 }
