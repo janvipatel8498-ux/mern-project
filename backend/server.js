@@ -66,7 +66,6 @@ app.use('/api/tax', taxRoutes);
 app.use('/api/categories', categoryRoutes);
 
 const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/api/config/razorpay', (req, res) =>
     res.send({ clientId: process.env.RAZORPAY_KEY_ID })
@@ -78,7 +77,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '/frontend/dist')));
 
     // Any route that is not API will serve index.html
-    app.get('(.*)', (req, res) => {
+    app.get('*', (req, res) => {
         if (!req.path.startsWith('/api')) {
             res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
         }
