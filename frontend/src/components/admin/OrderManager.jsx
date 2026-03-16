@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Link, useOutletContext } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { FiSearch, FiFilter, FiCheck, FiX, FiEye, FiDownload } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
@@ -16,7 +16,7 @@ const OrderManager = () => {
 
     const handleDeliver = async (id) => {
         try {
-            await axios.put(`/api/orders/${id}/deliver`, {}, { withCredentials: true });
+            await axiosInstance.put(`/api/orders/${id}/deliver`, {}, { withCredentials: true });
             toast.success('Order marked as Delivered');
             if (handleOrderUpdate) handleOrderUpdate(); // trigger refresh
         } catch (err) {

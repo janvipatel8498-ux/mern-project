@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { blockUser, deleteUser } from '../../redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSearch, FiTrash2, FiLock, FiUnlock, FiEye, FiPlus, FiX, FiMapPin, FiClock, FiShield, FiMail, FiUser, FiPhone, FiImage } from 'react-icons/fi';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import toast from 'react-hot-toast';
 import { useOutletContext } from 'react-router-dom';
 
@@ -111,7 +111,7 @@ const UserManager = () => {
                                         <button
                                             onClick={async () => {
                                                 try {
-                                                    await axios.put(`/api/users/${user._id}/approve`, { isApproved: true });
+                                                    await axiosInstance.put(`/api/users/${user._id}/approve`, { isApproved: true });
                                                     toast.success('Vendor Approved');
                                                     window.location.reload();
                                                 } catch (err) {

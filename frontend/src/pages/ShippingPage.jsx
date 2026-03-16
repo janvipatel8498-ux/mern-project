@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveShippingAddress } from '../redux/slices/cartSlice';
 import { setCredentials } from '../redux/slices/authSlice';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import toast from 'react-hot-toast';
 import { FiTrash2, FiMapPin } from 'react-icons/fi';
 
@@ -82,7 +82,7 @@ const ShippingPage = () => {
         // Save to user profile permanently
         try {
             setIsSavingLoading(true);
-            const { data } = await axios.put('/api/auth/profile',
+            const { data } = await axiosInstance.put('/api/auth/profile',
                 { shippingAddress: newAddress },
                 { withCredentials: true }
             );
@@ -105,7 +105,7 @@ const ShippingPage = () => {
         if (!window.confirm('Are you sure you want to delete this saved address?')) return;
 
         try {
-            const { data } = await axios.put('/api/auth/profile',
+            const { data } = await axiosInstance.put('/api/auth/profile',
                 { shippingAddress: { address: '', city: '', postalCode: '', country: '' } },
                 { withCredentials: true }
             );

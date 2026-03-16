@@ -4,7 +4,7 @@ import { FiEye, FiCheckCircle, FiTruck, FiBox, FiClock, FiShoppingCart } from 'r
 import { getVendorOrders } from '../../redux/slices/vendorSlice';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-hot-toast';
 
 const VendorOrderManager = () => {
@@ -18,7 +18,7 @@ const VendorOrderManager = () => {
 
     const updateStatusHandler = async (id, status) => {
         try {
-            await axios.put(`/api/orders/${id}/status`, { status });
+            await axiosInstance.put(`/api/orders/${id}/status`, { status });
             toast.success(`Order status updated to ${status}`);
             dispatch(getVendorOrders());
         } catch (err) {

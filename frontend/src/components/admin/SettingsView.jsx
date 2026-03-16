@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FiSave, FiSettings, FiPercent, FiPower } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { getSystemSettings } from '../../redux/slices/adminSlice';
 import { useOutletContext } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ const SettingsView = () => {
         e.preventDefault();
         setIsSaving(true);
         try {
-            await axios.put('/api/settings', {
+            await axiosInstance.put('/api/settings', {
                 maintenanceMode,
                 commissionPercentage: Number(commission)
             }, { withCredentials: true });

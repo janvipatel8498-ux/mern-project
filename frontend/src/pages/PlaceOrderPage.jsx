@@ -6,7 +6,7 @@ import { clearCartItems } from '../redux/slices/cartSlice';
 import { toast } from 'react-hot-toast';
 import { FiMapPin, FiCreditCard, FiPackage } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { calculateDynamicTax } from '../utils/taxUtils';
 
 const PlaceOrderPage = () => {
@@ -27,7 +27,7 @@ const PlaceOrderPage = () => {
     useEffect(() => {
         const fetchTaxConfigs = async () => {
             try {
-                const { data } = await axios.get('/api/tax');
+                const { data } = await axiosInstance.get('/api/tax');
                 setTaxConfigs(data);
             } catch (error) {
                 console.error("Failed to fetch tax configs", error);
@@ -49,7 +49,7 @@ const PlaceOrderPage = () => {
             if (paymentMethod === 'Razorpay' && razorpayOrder) {
                 // Handle Razorpay Payment Initialization
                 const loadRazorpay = async () => {
-                    const { data: { clientId } } = await axios.get('/api/config/razorpay');
+                    const { data: { clientId } } = await axiosInstance.get('/api/config/razorpay');
 
                     if (!clientId || clientId === 'your_razorpay_key_id') {
                         // Redirect to the mock payment gateway if user hasn't put in real API keys yet

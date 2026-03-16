@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FiShoppingCart, FiUser, FiLogOut, FiMenu, FiPackage } from 'react-icons/fi';
 import { logout } from '../redux/slices/authSlice';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { toast } from 'react-hot-toast';
 
 const Header = () => {
@@ -17,7 +17,7 @@ const Header = () => {
 
     const logoutHandler = async () => {
         try {
-            await axios.post('/api/auth/logout');
+            await axiosInstance.post('/api/auth/logout');
             dispatch(logout());
             setIsMenuOpen(false);
             navigate('/login', { replace: true });

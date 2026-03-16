@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { FiUsers, FiShoppingBag, FiBox, FiList, FiSettings, FiPieChart, FiUserPlus, FiXCircle, FiUser, FiLogOut, FiUserCheck, FiTruck, FiMessageSquare, FiStar, FiHelpCircle } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
 
     const logoutHandler = async () => {
         try {
-            await axios.post('/api/auth/logout');
+            await axiosInstance.post('/api/auth/logout');
             dispatch(logout());
             toast.success('Admin logged out');
             navigate('/login');

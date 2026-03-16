@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { FiSave, FiRefreshCw } from 'react-icons/fi';
 import { motion } from 'framer-motion';
@@ -12,7 +12,7 @@ const TaxManagementPage = () => {
     const fetchTaxConfigs = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('/api/tax');
+            const { data } = await axiosInstance.get('/api/tax');
             setTaxConfigs(data);
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to load tax configurations');
@@ -34,7 +34,7 @@ const TaxManagementPage = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await axios.put('/api/tax', {
+            await axiosInstance.put('/api/tax', {
                 taxUpdates: taxConfigs
             });
             toast.success('Tax configurations saved successfully!');
