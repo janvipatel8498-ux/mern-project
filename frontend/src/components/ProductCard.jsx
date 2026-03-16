@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
         >
             <Link to={`/product/${product._id}`} className="block relative overflow-hidden h-48 -mt-6 -mx-6 mb-4 bg-gray-100 dark:bg-gray-800">
                 <img
-                    src={product.image?.startsWith('http') ? product.image : `https://mern-project-f1de.onrender.com${product.image}`}
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=FreshMart+Image' }}
