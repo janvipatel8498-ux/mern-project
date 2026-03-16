@@ -18,6 +18,7 @@ import MyOrdersPage from './pages/MyOrdersPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductEditPage from './pages/admin/ProductEditPage';
 import CancelledOrdersPage from './pages/admin/CancelledOrdersPage';
+import CategoryManagementPage from './pages/admin/CategoryManagementPage';
 
 // Static Pages
 import AboutPage from './pages/AboutPage';
@@ -39,6 +40,7 @@ import SettingsView from './components/admin/SettingsView';
 import SupportTicketManager from './components/admin/SupportTicketManager';
 import AdminVendorReviews from './components/admin/AdminVendorReviews';
 import UserSupportManager from './components/admin/UserSupportManager';
+import TaxManagementPage from './pages/admin/TaxManagementPage';
 
 // Vendor Components
 import VendorOverview from './components/vendor/VendorOverview';
@@ -100,6 +102,8 @@ function App() {
             <Route path="support" element={<SupportTicketManager />} />
             <Route path="vendor-reviews" element={<AdminVendorReviews />} />
             <Route path="customer-support" element={<UserSupportManager />} />
+            <Route path="taxes" element={<TaxManagementPage />} />
+            <Route path="categories" element={<CategoryManagementPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
           <Route path="/admin/product/:id/edit" element={<ProductEditPage />} />

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiSave, FiPackage, FiTag, FiInfo, FiLayers, FiDollarSign } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import axios from '../../utils/axiosInstance';
 
 import { getProductDetails, updateProduct } from '../../redux/slices/productSlice';
 
@@ -19,11 +20,22 @@ const ProductEditPage = () => {
     const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
     const [unit, setUnit] = useState('unit');
+    const [categories, setCategories] = useState([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
     const { product, loading, error } = useSelector((state) => state.products);
 
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const { data } = await axios.get('/api/categories');
+                setCategories(data);
+            } catch (err) {
+                console.error('Failed to fetch categories', err);
+            }
+        };
+        fetchCategories();
+
         if (!isInitialized || product._id !== productId) {
             if (product._id !== productId) {
                 dispatch(getProductDetails(productId));
@@ -148,8 +160,8 @@ const ProductEditPage = () => {
                                             required
                                         >
                                             <option value="">Select Domain</option>
-                                            {['Groceries', 'Fruits', 'Vegetables', 'Dairy & Bakery', 'Meat & Seafood', 'Snacks & Beverages', 'Household', 'Personal Care', 'Other'].map(c => (
-                                                <option key={c} value={c}>{c}</option>
+                                            {categories.map(c => (
+                                                <option key={c._id} value={c.name}>{c.name}</option>
                                             ))}
                                         </select>
                                     </div>

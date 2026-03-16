@@ -84,9 +84,9 @@ const DeliveryAssignedOrders = () => {
                                     </div>
                                 </div>
                                 <span className={`px-4 py-1.5 text-[10px] font-black rounded-full uppercase tracking-widest border shadow-sm ${order.status === 'Processing' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                        order.status === 'Shipped' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                                            order.status === 'Out for Delivery' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                                'bg-gray-50 text-gray-700 border-gray-100'
+                                    order.status === 'Shipped' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                        order.status === 'Out for Delivery' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                            'bg-gray-50 text-gray-700 border-gray-100'
                                     }`}>
                                     {order.status}
                                 </span>
@@ -128,23 +128,7 @@ const DeliveryAssignedOrders = () => {
                                     <FiEye className="text-base" /> View Hub Details
                                 </Link>
 
-                                {order.status === 'Processing' && (
-                                    <button
-                                        onClick={() => updateStatusHandler(order._id, 'Shipped')}
-                                        className="flex justify-center items-center gap-3 py-5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-500/30 transition-all hover:shadow-blue-500/50 active:scale-[0.98] group"
-                                    >
-                                        <FiTruck className="text-xl group-hover:translate-x-1 transition-transform" />
-                                        Start Delivery Route
-                                    </button>
-                                )}
-                                {order.status === 'Shipped' && (
-                                    <button
-                                        onClick={() => updateStatusHandler(order._id, 'Out for Delivery')}
-                                        className="flex justify-center items-center gap-3 py-5 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-purple-500/30 transition-all hover:shadow-purple-500/50 active:scale-[0.98]"
-                                    >
-                                        <FiTruck className="text-xl" /> Out for Delivery
-                                    </button>
-                                )}
+
                             </div>
                         </div>
                     ))}

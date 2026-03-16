@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrder, payOrder, resetOrderState } from '../redux/slices/orderSlice';
@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { FiMapPin, FiCreditCard, FiPackage } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { calculateDynamicTax } from '../utils/taxUtils';
 
 const PlaceOrderPage = () => {
     const dispatch = useDispatch();
@@ -20,6 +21,20 @@ const PlaceOrderPage = () => {
 
     const auth = useSelector((state) => state.auth);
     const { userInfo } = auth;
+
+    const [taxConfigs, setTaxConfigs] = useState([]);
+
+    useEffect(() => {
+        const fetchTaxConfigs = async () => {
+            try {
+                const { data } = await axios.get('/api/tax');
+                setTaxConfigs(data);
+            } catch (error) {
+                console.error("Failed to fetch tax configs", error);
+            }
+        };
+        fetchTaxConfigs();
+    }, []);
 
     useEffect(() => {
         if (!shippingAddress.address) {
@@ -88,9 +103,13 @@ const PlaceOrderPage = () => {
 
     const addDecimals = (num) => (Math.round(num * 100) / 100).toFixed(2);
     const itemsPrice = addDecimals(cartItems.reduce((acc, item) => acc + item.price * item.qty, 0));
-    const shippingPrice = addDecimals(itemsPrice > 500 ? 0 : 50);
-    const taxPrice = addDecimals(Number((0.05 * itemsPrice).toFixed(2))); // 5% tax
-    const totalPrice = (Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2);
+    const shippingPrice = addDecimals(0); // FREE shipping
+
+    // Dynamic Tax Calculation using config from database
+    const effectiveTaxRate = calculateDynamicTax(cartItems, taxConfigs);
+    const taxPrice = addDecimals(Number(((effectiveTaxRate / 100) * itemsPrice).toFixed(2)));
+
+    const totalPrice = (Number(itemsPrice) + Number(taxPrice)).toFixed(2);
 
     const placeOrderHandler = () => {
         if (!window.Razorpay && paymentMethod === 'Razorpay') {
@@ -175,8 +194,7 @@ const PlaceOrderPage = () => {
 
                             <div className="space-y-4 mb-6 text-gray-700 dark:text-gray-300">
                                 <div className="flex justify-between"><span>Items</span><span>₹{itemsPrice}</span></div>
-                                <div className="flex justify-between"><span>Shipping</span><span>₹{shippingPrice}</span></div>
-                                <div className="flex justify-between"><span>Tax</span><span>₹{taxPrice}</span></div>
+                                <div className="flex justify-between"><span>All Tax <span className="text-xs font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md ml-1">{effectiveTaxRate.toFixed(1)}%</span></span><span>₹{taxPrice}</span></div>
                             </div>
 
                             <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mb-8">

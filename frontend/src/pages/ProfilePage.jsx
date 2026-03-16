@@ -11,6 +11,9 @@ const ProfilePage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [panCardPhoto, setPanCardPhoto] = useState('');
+    const [uploading, setUploading] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -21,10 +24,36 @@ const ProfilePage = () => {
         if (!userInfo) {
             navigate('/login');
         } else {
-            setName(userInfo.name);
-            setEmail(userInfo.email);
+            setName(userInfo.name || '');
+            setEmail(userInfo.email || '');
+            setPhoneNumber(userInfo.phoneNumber || '');
+            setPanCardPhoto(userInfo.panCardPhoto || '');
         }
     }, [navigate, userInfo]);
+
+    const uploadFileHandler = async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+        setUploading(true);
+
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            };
+
+            const { data } = await axios.post('/api/upload', formData, config);
+            setPanCardPhoto(data.image);
+            toast.success('PAN Card photo uploaded successfully. Please save changes.');
+            setUploading(false);
+        } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || 'Image upload failed');
+            setUploading(false);
+        }
+    };
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -39,7 +68,7 @@ const ProfilePage = () => {
                 };
                 const { data } = await axios.put(
                     '/api/auth/profile',
-                    { name, email, password },
+                    { name, email, password, phoneNumber, panCardPhoto },
                     config
                 );
 
@@ -184,6 +213,55 @@ const ProfilePage = () => {
                                     />
                                 </div>
                             </div>
+
+                            {/* Vendor & Delivery Agent Specific Fields */}
+                            {(userInfo?.role === 'delivery' || userInfo?.role === 'vendor') && (
+                                <div className="pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                                    <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                        <FiShield className="text-primary-500" /> Professional Details
+                                    </h4>
+                                    <div className="grid grid-cols-1 gap-6">
+                                        <div className="space-y-1.5">
+                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number *</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Enter your phone number"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                required
+                                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white shadow-sm"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">PAN Card Photo *</label>
+                                            {!userInfo?.panCardPhoto ? (
+                                                <div className="flex items-center gap-4">
+                                                    <input
+                                                        type="file"
+                                                        id="image-file"
+                                                        label="Choose File"
+                                                        onChange={uploadFileHandler}
+                                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                                                    />
+                                                    {uploading && <div className="text-sm text-primary-600 font-medium">Uploading...</div>}
+                                                </div>
+                                            ) : (
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                                                    <FiLock className="text-amber-500" /> KYC Document uploaded and locked. Cannot be changed.
+                                                </p>
+                                            )}
+
+                                            {panCardPhoto && (
+                                                <div className="mt-4 relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 w-fit">
+                                                    <img src={panCardPhoto} alt="PAN Card" className="h-32 object-cover" />
+                                                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full shadow">Uploaded</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
                                 <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">

@@ -130,7 +130,7 @@ const MockPaymentGatewayPage = () => {
     };
 
     // Helper to get total price safely
-    const amountDue = order?.order?.totalPrice || order?.razorpayOrder?.amount / 100 || '0.00';
+    const amountDue = (order?.totalPrice || order?.order?.totalPrice || Math.max(0, order?.razorpayOrder?.amount / 100 || 0)).toFixed(2);
 
     return (
         <div className="min-h-[calc(100vh-8rem)] bg-gray-50 dark:bg-dark-bg flex items-center justify-center p-4">

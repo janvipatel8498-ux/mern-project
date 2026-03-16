@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listProducts } from '../redux/slices/productSlice';
 import ProductCard from '../components/ProductCard';
 import { FiSearch, FiFilter } from 'react-icons/fi';
+import axios from '../utils/axiosInstance';
 
 const ProductsPage = () => {
     const dispatch = useDispatch();
@@ -10,12 +11,25 @@ const ProductsPage = () => {
     const [category, setCategory] = useState('');
     const [priceRange, setPriceRange] = useState([0, 5000]);
     const [showOnlyInStock, setShowOnlyInStock] = useState(false);
+    const [categories, setCategories] = useState([]);
 
-    const { products, loading, error, page, pages } = useSelector((state) => state.products);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const { data } = await axios.get('/api/categories');
+                setCategories(data.map(c => c.name));
+            } catch (err) {
+                console.error('Failed to fetch categories', err);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         dispatch(listProducts({ keyword, category }));
     }, [dispatch, keyword, category]);
+
+    const { products, loading, error, page, pages } = useSelector((state) => state.products);
 
     // Client-side filtering for price and availability for now to avoid breaking backend
     const filteredProducts = products.filter(p => {
@@ -28,8 +42,6 @@ const ProductsPage = () => {
         e.preventDefault();
         dispatch(listProducts({ keyword, category }));
     };
-
-    const categories = ['Groceries', 'Fruits', 'Vegetables', 'Dairy & Bakery', 'Meat & Seafood', 'Snacks & Beverages', 'Household', 'Personal Care', 'Other'];
 
     return (
         <div className="container mx-auto px-4 py-8">

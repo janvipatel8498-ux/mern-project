@@ -44,14 +44,8 @@ const ShippingPage = () => {
     useEffect(() => {
         if (!userInfo) {
             navigate('/login?redirect=/shipping');
-        } else if (userInfo.shippingAddress?.address && !address) {
-            // Auto-fill if empty and saved address exists
-            setAddress(userInfo.shippingAddress.address);
-            setCountry(userInfo.shippingAddress.country || '');
-            setCity(userInfo.shippingAddress.city || '');
-            setPostalCode(userInfo.shippingAddress.postalCode || '');
         }
-    }, [userInfo, navigate, address]);
+    }, [userInfo, navigate]);
 
     // Handle Country Change
     const handleCountryChange = (e) => {

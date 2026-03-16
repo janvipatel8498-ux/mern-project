@@ -19,6 +19,11 @@ const store = configureStore({
         tickets: ticketReducer,
         contactTickets: contactTicketReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            immutableCheck: { warnAfter: 128 },
+            serializableCheck: { warnAfter: 128 },
+        }),
     devTools: import.meta.env.MODE !== 'production',
 });
 

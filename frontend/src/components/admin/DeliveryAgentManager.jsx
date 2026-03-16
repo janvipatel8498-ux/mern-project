@@ -128,6 +128,23 @@ const DeliveryAgentManager = () => {
                                     <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Network Identity</p>
                                     <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{agent.email}</p>
                                 </div>
+                                {agent.phoneNumber && (
+                                    <div>
+                                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Contact</p>
+                                        <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{agent.phoneNumber}</p>
+                                    </div>
+                                )}
+                                {agent.panCardPhoto && (
+                                    <div>
+                                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                            KYC Verification
+                                            <FiCheckCircle className="text-emerald-500" size={12} />
+                                        </p>
+                                        <a href={agent.panCardPhoto} target="_blank" rel="noopener noreferrer" className="block mt-1 hover:opacity-80 transition-opacity">
+                                            <img src={agent.panCardPhoto} alt="PAN Card" className="h-12 w-20 object-cover rounded-xl border border-gray-200 dark:border-white/10 shadow-sm" />
+                                        </a>
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-end border-t border-gray-100 dark:border-white/5 pt-4">
                                     <div>
                                         <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Protocol Date</p>

@@ -8,7 +8,7 @@ const FAQPage = () => {
         },
         {
             question: "Is there a minimum order value?",
-            answer: "Yes, the minimum order value is ₹500 for free delivery. For orders below ₹500, a standard delivery fee of ₹50 applies."
+            answer: "Yes, the minimum order value is ₹50 for free delivery. For orders below ₹50, a standard delivery fee of ₹50 applies."
         },
         {
             question: "Do you deliver organic products?",

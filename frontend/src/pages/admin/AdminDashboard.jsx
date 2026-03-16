@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
     const { userInfo } = useSelector((state) => state.auth);
     const { users, orders, settings, loading: adminLoading } = useSelector((state) => state.admin);
-    const { products, loading: productsLoading } = useSelector((state) => state.products);
+    const { products, loading: productsLoading, page, pages } = useSelector((state) => state.products);
 
     useEffect(() => {
         if (!userInfo || userInfo.role !== 'admin') {
@@ -56,10 +56,12 @@ const AdminDashboard = () => {
         { name: 'Reviews', icon: <FiStar />, path: 'vendor-reviews' },
         { name: 'Vnd Insight', icon: <FiMessageSquare />, path: 'support' },
         { name: 'Cst Support', icon: <FiHelpCircle />, path: 'customer-support' },
+        { name: 'Taxes', icon: <FiSettings />, path: 'taxes' },
+        { name: 'Categories', icon: <FiList />, path: 'categories' },
         { name: 'Profile', icon: <FiUser />, path: 'profile' },
     ];
 
-    if (adminLoading || productsLoading) return (
+    if (adminLoading) return (
         <div className="min-h-screen flex justify-center items-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
         </div>
@@ -171,7 +173,10 @@ const AdminDashboard = () => {
                             users,
                             orders,
                             products,
+                            page,
+                            pages,
                             settings,
+                            productsLoading,
                             handleOrderUpdate
                         }} />
                     </div>

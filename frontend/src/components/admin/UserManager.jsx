@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { blockUser, deleteUser } from '../../redux/slices/adminSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiTrash2, FiLock, FiUnlock, FiEye, FiPlus, FiX, FiMapPin, FiClock, FiShield, FiMail, FiUser } from 'react-icons/fi';
+import { FiSearch, FiTrash2, FiLock, FiUnlock, FiEye, FiPlus, FiX, FiMapPin, FiClock, FiShield, FiMail, FiUser, FiPhone, FiImage } from 'react-icons/fi';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useOutletContext } from 'react-router-dom';
@@ -223,6 +223,23 @@ const UserManager = () => {
                                             {new Date(selectedUser.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
                                         </p>
                                     </div>
+
+                                    {selectedUser.phoneNumber && (
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 col-span-2 sm:col-span-1">
+                                            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1"><FiPhone size={12} /> Phone Number</p>
+                                            <p className="font-semibold text-gray-800 dark:text-gray-200">
+                                                {selectedUser.phoneNumber}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {selectedUser.panCardPhoto && (
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 col-span-2 sm:col-span-1">
+                                            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1"><FiImage size={12} /> PAN Card Photo</p>
+                                            <a href={selectedUser.panCardPhoto} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 hover:opacity-80 transition-opacity">
+                                                <img src={selectedUser.panCardPhoto} alt="PAN Card" className="h-16 w-auto object-cover rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm" />
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

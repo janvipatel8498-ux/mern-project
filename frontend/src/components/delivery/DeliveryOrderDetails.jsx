@@ -88,10 +88,10 @@ const DeliveryOrderDetails = () => {
                     <p className="text-gray-400 font-mono mt-2 text-sm">SECURE_TRACK_ID: {order._id.toUpperCase()}</p>
                 </div>
                 <div className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl border-2 ${order.status === 'Processing' ? 'bg-blue-600 border-blue-400 text-white shadow-blue-500/20' :
-                        order.status === 'Shipped' ? 'bg-amber-500 border-amber-300 text-white shadow-amber-500/20' :
-                            order.status === 'Out for Delivery' ? 'bg-purple-600 border-purple-400 text-white shadow-purple-500/20' :
-                                order.status === 'Delivered' ? 'bg-green-600 border-green-400 text-white shadow-green-500/20' :
-                                    'bg-red-600 border-red-400 text-white shadow-red-500/20'
+                    order.status === 'Shipped' ? 'bg-amber-500 border-amber-300 text-white shadow-amber-500/20' :
+                        order.status === 'Out for Delivery' ? 'bg-purple-600 border-purple-400 text-white shadow-purple-500/20' :
+                            order.status === 'Delivered' ? 'bg-green-600 border-green-400 text-white shadow-green-500/20' :
+                                'bg-red-600 border-red-400 text-white shadow-red-500/20'
                     }`}>
                     {order.status}
                 </div>
@@ -208,13 +208,22 @@ const DeliveryOrderDetails = () => {
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                {(order.status === 'Processing' || order.status === 'Shipped') && (
+                                {order.status === 'Processing' && (
+                                    <button
+                                        onClick={() => handleStatusUpdate('Shipped')}
+                                        disabled={isUpdating}
+                                        className="w-full py-6 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-blue-600/20 hover:shadow-blue-600/40 hover:-translate-y-1 transition-all flex justify-center items-center gap-3 active:scale-95"
+                                    >
+                                        <FiTruck className="text-xl" /> Start Dispatch (Shipped)
+                                    </button>
+                                )}
+                                {order.status === 'Shipped' && (
                                     <button
                                         onClick={() => handleStatusUpdate('Out for Delivery')}
                                         disabled={isUpdating}
-                                        className="w-full py-6 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary-600/20 hover:shadow-primary-600/40 hover:-translate-y-1 transition-all flex justify-center items-center gap-3 active:scale-95"
+                                        className="w-full py-6 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-purple-600/20 hover:shadow-purple-600/40 hover:-translate-y-1 transition-all flex justify-center items-center gap-3 active:scale-95"
                                     >
-                                        <FiTruck className="text-xl" /> Go Out for Delivery
+                                        <FiMapPin className="text-xl" /> Go Out for Delivery
                                     </button>
                                 )}
                                 {order.status === 'Out for Delivery' && (
@@ -222,24 +231,14 @@ const DeliveryOrderDetails = () => {
                                         onClick={() => handleStatusUpdate('Delivered')}
                                         disabled={isUpdating || (isCOD && !hasCollectedCash)}
                                         className={`w-full py-6 text-white rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] shadow-xl transition-all flex justify-center items-center gap-3 active:scale-95 ${isUpdating || (isCOD && !hasCollectedCash)
-                                                ? 'bg-gray-400 cursor-not-allowed grayscale'
-                                                : 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-600/20 hover:shadow-green-600/40 hover:-translate-y-1'
+                                            ? 'bg-gray-400 cursor-not-allowed grayscale'
+                                            : 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-600/20 hover:shadow-green-600/40 hover:-translate-y-1'
                                             }`}
                                     >
                                         <FiCheckCircle className="text-xl" /> Finalize Delivery
                                     </button>
                                 )}
-                                <button
-                                    onClick={() => {
-                                        if (window.confirm('Mark this delivery as failed? This will alert ops.')) {
-                                            handleStatusUpdate('Cancelled');
-                                        }
-                                    }}
-                                    disabled={isUpdating}
-                                    className="w-full py-4 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/10 text-red-500 dark:text-red-400 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex justify-center items-center gap-2 border border-red-100 dark:border-red-900/20"
-                                >
-                                    <FiXCircle /> Terminate Job
-                                </button>
+
                             </div>
                         </div>
                     )}

@@ -23,9 +23,19 @@ const VendorProductManager = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
         dispatch(getVendorProducts());
+        const fetchCategories = async () => {
+            try {
+                const { data } = await axios.get('/api/categories');
+                setCategories(data);
+            } catch (err) {
+                console.error('Failed to fetch categories', err);
+            }
+        };
+        fetchCategories();
     }, [dispatch]);
 
     useEffect(() => {
@@ -133,7 +143,17 @@ const VendorProductManager = () => {
                         </div>
                     </div>
                     <button
-                        onClick={() => { setEditingProduct(null); setShowModal(true); }}
+                        onClick={() => {
+                            setEditingProduct(null);
+                            setName('');
+                            setPrice(0);
+                            setDescription('');
+                            setImage('');
+                            setCategory('');
+                            setCountInStock(0);
+                            setUnit('unit');
+                            setShowModal(true);
+                        }}
                         className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary-500/20 hover:shadow-primary-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
                     >
                         <FiPlus className="text-lg" /> New Acquisition
@@ -260,15 +280,9 @@ const VendorProductManager = () => {
                                     <label className="block text-sm font-medium mb-1">Category</label>
                                     <select value={category} onChange={(e) => setCategory(e.target.value)} className="input-field" required>
                                         <option value="" disabled>Select a Category</option>
-                                        <option value="Groceries">Groceries</option>
-                                        <option value="Fruits">Fruits</option>
-                                        <option value="Vegetables">Vegetables</option>
-                                        <option value="Dairy & Bakery">Dairy & Bakery</option>
-                                        <option value="Meat & Seafood">Meat & Seafood</option>
-                                        <option value="Snacks & Beverages">Snacks & Beverages</option>
-                                        <option value="Household">Household</option>
-                                        <option value="Personal Care">Personal Care</option>
-                                        <option value="Other">Other</option>
+                                        {categories.map((c) => (
+                                            <option key={c._id} value={c.name}>{c.name}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="md:col-span-2 space-y-2">

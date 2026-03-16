@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate, Navigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import axios from '../../utils/axiosInstance';
@@ -17,6 +17,7 @@ const DeliveryDashboard = () => {
     const { userInfo } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Protect route: Redirect if not a delivery agent or admin
     if (!userInfo) {
@@ -44,6 +45,9 @@ const DeliveryDashboard = () => {
         { name: 'Delivery History', icon: <FiClock />, path: '/delivery/dashboard/history' },
         { name: 'Profile', icon: <FiUser />, path: '/delivery/dashboard/profile' },
     ];
+
+    const isProfileComplete = userInfo?.phoneNumber && userInfo?.panCardPhoto;
+    const isProfileRoute = location.pathname.includes('/profile');
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-dark-bg">
@@ -96,14 +100,39 @@ const DeliveryDashboard = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto px-8 pb-8 pt-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                >
-                    <Outlet />
-                </motion.div>
+            <main className="flex-1 overflow-y-auto px-8 pb-8 pt-6 relative">
+                {!isProfileComplete && !isProfileRoute && userInfo.role === 'delivery' ? (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-gray-50/90 dark:bg-dark-bg/90 backdrop-blur-sm p-8">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-white dark:bg-gray-800 p-10 rounded-[2rem] shadow-2xl border border-red-100 dark:border-red-900/30 max-w-lg w-full text-center relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
+                            <div className="w-24 h-24 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <FiUser className="w-12 h-12 text-red-500" />
+                            </div>
+                            <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Profile Incomplete</h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">
+                                To ensure security and compliance, you must provide your Phone Number and upload a photo of your PAN Card before accessing orders and history.
+                            </p>
+                            <button
+                                onClick={() => navigate('/delivery/dashboard/profile')}
+                                className="w-full py-4 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-0.5 transition-all text-sm uppercase tracking-wider"
+                            >
+                                Complete Profile Now
+                            </button>
+                        </motion.div>
+                    </div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <Outlet />
+                    </motion.div>
+                )}
             </main>
         </div>
     );

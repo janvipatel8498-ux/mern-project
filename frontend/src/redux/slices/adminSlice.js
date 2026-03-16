@@ -95,10 +95,20 @@ const adminSlice = createSlice({
                 state.loading = false;
                 state.orders = action.payload;
             })
+            .addCase(getAdminOrders.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
 
             // getSettings
+            .addCase(getSystemSettings.pending, (state) => { state.loading = true; })
             .addCase(getSystemSettings.fulfilled, (state, action) => {
+                state.loading = false;
                 state.settings = action.payload;
+            })
+            .addCase(getSystemSettings.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     }
 });

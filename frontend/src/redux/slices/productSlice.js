@@ -6,7 +6,7 @@ export const listProducts = createAsyncThunk(
     async ({ keyword = '', pageNumber = '', category = '' } = {}, { rejectWithValue }) => {
         try {
             const { data } = await axios.get(
-                `/api/products?keyword=${keyword}&pageNumber=${pageNumber}&category=${category}`
+                `/api/products?keyword=${encodeURIComponent(keyword)}&pageNumber=${pageNumber}&category=${encodeURIComponent(category)}`
             );
             return data;
         } catch (error) {
