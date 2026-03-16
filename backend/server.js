@@ -66,6 +66,7 @@ app.use('/api/tax', taxRoutes);
 app.use('/api/categories', categoryRoutes);
 
 const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/api/config/razorpay', (req, res) =>
     res.send({ clientId: process.env.RAZORPAY_KEY_ID })
