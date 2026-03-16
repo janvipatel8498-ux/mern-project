@@ -1,4 +1,5 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -65,7 +66,9 @@ app.use('/api/contact-tickets', contactTicketRoutes);
 app.use('/api/tax', taxRoutes);
 app.use('/api/categories', categoryRoutes);
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/api/config/razorpay', (req, res) =>
@@ -74,13 +77,16 @@ app.get('/api/config/razorpay', (req, res) =>
 
 // Serve Static Assets in Production
 if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static(path.join(__dirname, '/frontend/dist')));
+    // Determine static folder - backend is in project_root/backend/
+    // frontend is in project_root/frontend/dist/
+    const frontendDistPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+    
+    app.use(express.static(frontendDistPath));
 
     // Any route that is not API will serve index.html
     app.get(/.*/, (req, res) => {
         if (!req.path.startsWith('/api')) {
-            res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+            res.sendFile(path.join(frontendDistPath, 'index.html'));
         }
     });
 } else {
