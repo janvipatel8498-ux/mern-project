@@ -6,10 +6,12 @@ const generateToken = (res, userId) => {
     });
 
     // Set JWT as HTTP-Only cookie
+    console.log(`Generating token for user: ${userId}`);
+    
     res.cookie('jwt', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Only secure in production
-        sameSite: 'lax', // Use 'lax' for better local dev compatibility with proxies
+        secure: true, // Always secure if possible, or at least in production
+        sameSite: 'none', // Required for cross-site cookies (Vercel frontend -> Render backend)
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 };

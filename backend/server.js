@@ -92,12 +92,20 @@ if (process.env.NODE_ENV === 'production') {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error("Backend Error:", err);
+    // Log the full error to the console for debugging
+    console.error(`[${new Date().toISOString()}] Backend Error:`, {
+        message: err.message,
+        stack: err.stack,
+        path: req.path,
+        method: req.method
+    });
+
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    
+    // Send a sanitized error response
     res.status(statusCode).json({
-        message: err.message || err.error?.description || 'Server Error',
+        message: err.message || 'Server Error',
         stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-        details: err
     });
 });
 
