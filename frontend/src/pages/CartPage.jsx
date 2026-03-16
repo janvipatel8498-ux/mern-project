@@ -60,7 +60,7 @@ const CartPage = () => {
                                 {cartItems.map((item) => (
                                     <div key={item._id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-6 border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
                                         <div className="col-span-1 md:col-span-6 flex items-center gap-4">
-                                            <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-xl" />
+                                            <img src={item.image?.startsWith('http') ? item.image : `https://mern-project-f1de.onrender.com${item.image}`} alt={item.name} className="w-24 h-24 object-cover rounded-xl" />
                                             <div>
                                                 <Link to={`/product/${item._id}`} className="font-semibold text-lg text-gray-900 dark:text-white hover:text-primary-600 transition-colors line-clamp-1">
                                                     {item.name}
