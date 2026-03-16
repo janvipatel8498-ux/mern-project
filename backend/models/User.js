@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema(
             city: { type: String, default: '' },
             postalCode: { type: String, default: '' },
             country: { type: String, default: '' },
+        },
+        phoneNumber: {
+            type: String,
+            default: '',
+        },
+        panCardPhoto: {
+            type: String,
+            default: '',
         }
     },
     {

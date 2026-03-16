@@ -1,5 +1,6 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
+import TaxConfig from '../models/TaxConfig.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
@@ -56,11 +57,44 @@ export const addOrderItems = async (req, res, next) => {
                 }
             }
 
-            // Calculate prices server-side to ensure accuracy
-            const itemsPrice = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-            const shippingPrice = itemsPrice > 500 ? 0 : 50;
-            const taxPrice = Number((0.05 * itemsPrice).toFixed(2));
-            const totalPrice = itemsPrice + shippingPrice + taxPrice;
+            // Fetch dynamic tax configs from database
+            const taxConfigs = await TaxConfig.find({});
+            const configMap = new Map(taxConfigs.map(c => [c.category, c.taxRate]));
+
+            // Calculate dynamic tax server-side
+            const taxBrackets = new Set();
+            for (const item of orderItems) {
+                const product = await Product.findById(item._id);
+                const category = product.category || '';
+
+                if (configMap.has(category)) {
+                    taxBrackets.add(configMap.get(category));
+                } else {
+                    taxBrackets.add(0);
+                }
+            }
+
+            const uniqueBrackets = Array.from(taxBrackets);
+            let effectiveTaxRate = 0;
+            if (uniqueBrackets.length === 1) {
+                effectiveTaxRate = uniqueBrackets[0];
+            } else if (uniqueBrackets.length > 1) {
+                const sum = uniqueBrackets.reduce((acc, curr) => acc + curr, 0);
+                effectiveTaxRate = (sum / uniqueBrackets.length);
+            }
+
+            let itemsPrice = 0;
+            for (const item of orderItems) {
+                const product = await Product.findById(item._id);
+                // Ensure price is from the DB
+                item.price = product.price;
+                itemsPrice += item.price * item.qty;
+            }
+
+            const shippingPrice = 0; // FREE shipping
+
+            const taxPrice = Number(((effectiveTaxRate / 100) * itemsPrice).toFixed(2));
+            const totalPrice = itemsPrice + taxPrice;
 
             const order = new Order({
                 orderItems: orderItems.map((x) => ({
@@ -408,31 +442,27 @@ export const getCancelledStats = async (req, res, next) => {
     try {
         const stats = await Order.aggregate([
             { $match: { isCancelled: true } },
-            { $unwind: '$orderItems' },
-            {
-                $group: {
-                    _id: '$orderItems.vendor',
-                    cancelCount: { $sum: 1 },
-                    reasons: { $push: '$cancellationReason' },
-                },
-            },
             {
                 $lookup: {
                     from: 'users',
-                    localField: '_id',
+                    localField: 'user',
                     foreignField: '_id',
-                    as: 'vendorInfo',
+                    as: 'buyerInfo',
                 },
             },
-            { $unwind: { path: '$vendorInfo', preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: '$buyerInfo', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
-                    cancelCount: 1,
-                    reasons: 1,
-                    vendorName: '$vendorInfo.name',
-                    vendorEmail: '$vendorInfo.email',
+                    _id: 1,
+                    cancellationReason: 1,
+                    cancelledAt: 1,
+                    totalPrice: 1,
+                    buyerName: '$buyerInfo.name',
+                    buyerEmail: '$buyerInfo.email',
+                    buyerRole: '$buyerInfo.role',
                 },
             },
+            { $sort: { cancelledAt: -1 } } // Sort by most recently cancelled
         ]);
         res.json(stats);
     } catch (error) {

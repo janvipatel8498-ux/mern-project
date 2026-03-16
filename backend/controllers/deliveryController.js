@@ -50,8 +50,7 @@ export const getDeliveryDashboard = async (req, res, next) => {
         // Check if agent already has an active order
         const activeOrder = await Order.findOne({
             deliveryAgent: req.user._id,
-            isDelivered: false,
-            status: { $nin: ['Cancelled', 'Delivered'] }
+            status: { $in: ['Processing', 'Shipped', 'Out for Delivery'] }
         });
 
         let requestsCount = 0;
@@ -178,8 +177,7 @@ export const getDeliveryRequests = async (req, res, next) => {
         // Check if agent already has an active order
         const activeOrder = await Order.findOne({
             deliveryAgent: req.user._id,
-            isDelivered: false,
-            status: { $nin: ['Cancelled', 'Delivered'] }
+            status: { $in: ['Processing', 'Shipped', 'Out for Delivery'] }
         });
 
         if (activeOrder) {
@@ -219,8 +217,7 @@ export const acceptDelivery = async (req, res, next) => {
         // Check if agent already has an active order
         const activeOrder = await Order.findOne({
             deliveryAgent: req.user._id,
-            isDelivered: false,
-            status: { $nin: ['Cancelled', 'Delivered'] }
+            status: { $in: ['Processing', 'Shipped', 'Out for Delivery'] }
         });
 
         if (activeOrder) {

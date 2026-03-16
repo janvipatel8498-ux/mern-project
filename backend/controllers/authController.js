@@ -24,6 +24,8 @@ export const registerUser = async (req, res, next) => {
             password,
             role: role || 'user',
             vendorId: isVendor ? `VND-${Date.now()}` : undefined,
+            phoneNumber: (isVendor || isDelivery) ? req.body.phoneNumber : undefined,
+            panCardPhoto: (isVendor || isDelivery) ? req.body.panCardPhoto : undefined,
         });
 
         if (user) {
@@ -82,6 +84,8 @@ export const loginUser = async (req, res, next) => {
                 role: user.role,
                 isApproved: user.isApproved,
                 shippingAddress: user.shippingAddress,
+                phoneNumber: user.phoneNumber,
+                panCardPhoto: user.panCardPhoto,
             });
         } else {
             res.status(401);
@@ -138,6 +142,14 @@ export const updateUserProfile = async (req, res, next) => {
                 user.isOnline = req.body.isOnline;
             }
 
+            if (req.body.phoneNumber !== undefined) {
+                user.phoneNumber = req.body.phoneNumber;
+            }
+
+            if (req.body.panCardPhoto !== undefined) {
+                user.panCardPhoto = req.body.panCardPhoto;
+            }
+
             if (req.body.password) {
                 user.password = req.body.password;
             }
@@ -152,7 +164,9 @@ export const updateUserProfile = async (req, res, next) => {
                 isApproved: updatedUser.isApproved,
                 shippingAddress: updatedUser.shippingAddress,
                 avatar: updatedUser.avatar,
-                isOnline: updatedUser.isOnline
+                isOnline: updatedUser.isOnline,
+                phoneNumber: updatedUser.phoneNumber,
+                panCardPhoto: updatedUser.panCardPhoto
             });
         } else {
             res.status(404);

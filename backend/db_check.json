@@ -1,0 +1,62 @@
+{
+  "agents": [
+    {
+      "_id": "69a52dc4a44d7bbc9637e005",
+      "name": "de",
+      "email": "de@gmail.com",
+      "password": "$2b$10$nfbn5CBD/HkefawsDnJose2CxwzLSKkEAV.syj6sKSZdFelok2N0i",
+      "role": "delivery",
+      "isOnline": true,
+      "isBlocked": false,
+      "shippingAddress": {
+        "address": "",
+        "city": "",
+        "postalCode": "",
+        "country": ""
+      },
+      "isApproved": true,
+      "createdAt": "2026-03-02T06:27:16.678Z",
+      "updatedAt": "2026-03-03T11:28:54.909Z",
+      "__v": 0,
+      "approvedAt": "2026-03-02T06:32:01.505Z"
+    }
+  ],
+  "activeOrders": [
+    {
+      "_id": "69a96d0f6bc09680923405bf",
+      "user": "699c1e9870dcce71b7f28636",
+      "codAmountCollected": 0,
+      "orderItems": [
+        {
+          "name": "banana",
+          "qty": 1,
+          "image": "/uploads/image-1772428484668.avif",
+          "price": 20,
+          "product": "69a51cce7b7f96ccf6a43aa8",
+          "vendor": "69a180535f70fd4162374e82",
+          "_id": "69a96d0f6bc09680923405c0"
+        }
+      ],
+      "shippingAddress": {
+        "address": "aaaaaa",
+        "city": "Gujarat",
+        "postalCode": "989898",
+        "country": "India"
+      },
+      "paymentMethod": "CashOnDelivery",
+      "itemsPrice": 20,
+      "taxPrice": 1,
+      "shippingPrice": 50,
+      "totalPrice": 71,
+      "isPaid": false,
+      "isDelivered": false,
+      "status": "Out for Delivery",
+      "isCancelled": false,
+      "deliveryRejections": [],
+      "createdAt": "2026-03-05T11:46:23.978Z",
+      "updatedAt": "2026-03-05T11:48:42.941Z",
+      "__v": 0,
+      "deliveryAgent": "69a52dc4a44d7bbc9637e005"
+    }
+  ]
+}

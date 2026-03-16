@@ -15,6 +15,8 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
 import ticketRoutes from './routes/ticketRoutes.js';
 import contactTicketRoutes from './routes/contactTicketRoutes.js';
+import taxRoutes from './routes/taxRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 dotenv.config();
 
@@ -60,6 +62,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/contact-tickets', contactTicketRoutes);
+app.use('/api/tax', taxRoutes);
+app.use('/api/categories', categoryRoutes);
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
