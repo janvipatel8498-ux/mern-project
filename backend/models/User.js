@@ -56,6 +56,18 @@ const userSchema = new mongoose.Schema(
         panCardPhoto: {
             type: String,
             default: '',
+        },
+        shopAddress: {
+            type: String,
+            default: '',
+        },
+        shopLocationText: {
+            type: String,
+            default: '',
+        },
+        shopAddressProof: {
+            type: String,
+            default: '',
         }
     },
     {

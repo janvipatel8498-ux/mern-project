@@ -4,11 +4,19 @@ import { listProducts } from '../redux/slices/productSlice';
 import ProductCard from '../components/ProductCard';
 import { FiSearch, FiFilter } from 'react-icons/fi';
 import axios from '../utils/axiosInstance';
+import { useLocation } from 'react-router-dom';
 
 const ProductsPage = () => {
     const dispatch = useDispatch();
-    const [keyword, setKeyword] = useState('');
-    const [category, setCategory] = useState('');
+    const location = useLocation();
+    
+    // Parse keyword and category from URL initially
+    const queryParams = new URLSearchParams(location.search);
+    const initialKeyword = queryParams.get('keyword') || '';
+    const initialCategory = queryParams.get('category') || '';
+
+    const [keyword, setKeyword] = useState(initialKeyword);
+    const [category, setCategory] = useState(initialCategory);
     const [priceRange, setPriceRange] = useState([0, 5000]);
     const [showOnlyInStock, setShowOnlyInStock] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -28,6 +36,15 @@ const ProductsPage = () => {
     useEffect(() => {
         dispatch(listProducts({ keyword, category }));
     }, [dispatch, keyword, category]);
+
+    // Update keyword and category if URL changes externally
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const urlKeyword = params.get('keyword') || '';
+        const urlCategory = params.get('category') || '';
+        setKeyword(urlKeyword);
+        setCategory(urlCategory);
+    }, [location.search]);
 
     const { products, loading, error, page, pages } = useSelector((state) => state.products);
 

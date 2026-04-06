@@ -10,9 +10,8 @@ const generateToken = (res, userId) => {
     
     res.cookie('jwt', token, {
         httpOnly: true,
-        secure: true, // Always secure if possible, or at least in production
-        sameSite: 'none', // Required for cross-site cookies (Vercel frontend -> Render backend)
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        secure: true, 
+        sameSite: 'none', 
     });
 };
 

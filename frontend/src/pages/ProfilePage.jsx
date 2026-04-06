@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { FiPackage, FiChevronRight, FiGrid, FiUser, FiMail, FiLock, FiShield } from 'react-icons/fi';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { FiPackage, FiChevronRight, FiGrid, FiUser, FiMail, FiLock, FiShield, FiMapPin } from 'react-icons/fi';
 import axios from '../utils/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { setCredentials } from '../redux/slices/authSlice';
@@ -13,12 +13,19 @@ const ProfilePage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [panCardPhoto, setPanCardPhoto] = useState('');
+    const [shopLocationText, setShopLocationText] = useState('');
+    const [shopAddressProof, setShopAddressProof] = useState('');
+    const [uploadingProof, setUploadingProof] = useState(false);
     const [uploading, setUploading] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { userInfo } = useSelector((state) => state.auth);
+    const isAdmin = userInfo?.role === 'admin';
+
+
 
     useEffect(() => {
         if (!userInfo) {
@@ -28,6 +35,8 @@ const ProfilePage = () => {
             setEmail(userInfo.email || '');
             setPhoneNumber(userInfo.phoneNumber || '');
             setPanCardPhoto(userInfo.panCardPhoto || '');
+            setShopLocationText(userInfo.shopLocationText || '');
+            setShopAddressProof(userInfo.shopAddressProof || '');
         }
     }, [navigate, userInfo]);
 
@@ -55,8 +64,40 @@ const ProfilePage = () => {
         }
     };
 
+    const uploadProofHandler = async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+        setUploadingProof(true);
+
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            };
+
+            const { data } = await axios.post('/api/upload', formData, config);
+            setShopAddressProof(data.image);
+            toast.success('Address Proof uploaded successfully. Please save changes.');
+            setUploadingProof(false);
+        } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || 'Proof upload failed');
+            setUploadingProof(false);
+        }
+    };
+
     const submitHandler = async (e) => {
         e.preventDefault();
+
+        // Manual validation so user sees a clear popup instead of a silent browser block
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error('Please enter a complete and valid email address (e.g. includes .com)');
+            return;
+        }
+
         if (password !== confirmPassword) {
             toast.error('Passwords do not match');
         } else {
@@ -68,7 +109,7 @@ const ProfilePage = () => {
                 };
                 const { data } = await axios.put(
                     '/api/auth/profile',
-                    { name, email, password, phoneNumber, panCardPhoto },
+                    { name, email, password, phoneNumber, panCardPhoto, shopLocationText, shopAddressProof },
                     config
                 );
 
@@ -185,14 +226,16 @@ const ProfilePage = () => {
                             </div>
                         </div>
 
-                        <form onSubmit={submitHandler} className="space-y-6">
+                        <form onSubmit={submitHandler} className="space-y-6" noValidate>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                    <label htmlFor="name" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                         <FiUser className="text-gray-400" /> Full Name
                                     </label>
                                     <input
                                         type="text"
+                                        id="name"
+                                        name="name"
                                         placeholder="Enter your full name"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -201,11 +244,13 @@ const ProfilePage = () => {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                    <label htmlFor="email" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                         <FiMail className="text-gray-400" /> Email Address
                                     </label>
                                     <input
                                         type="email"
+                                        id="email"
+                                        name="email"
                                         placeholder="Enter your email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -222,9 +267,11 @@ const ProfilePage = () => {
                                     </h4>
                                     <div className="grid grid-cols-1 gap-6">
                                         <div className="space-y-1.5">
-                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number *</label>
+                                            <label htmlFor="phoneNumber" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number *</label>
                                             <input
                                                 type="text"
+                                                id="phoneNumber"
+                                                name="phoneNumber"
                                                 placeholder="Enter your phone number"
                                                 value={phoneNumber}
                                                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -234,13 +281,13 @@ const ProfilePage = () => {
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">PAN Card Photo *</label>
+                                            <label htmlFor="image-file" className="text-sm font-semibold text-gray-700 dark:text-gray-300">PAN Card Photo *</label>
                                             {!userInfo?.panCardPhoto ? (
                                                 <div className="flex items-center gap-4">
                                                     <input
                                                         type="file"
                                                         id="image-file"
-                                                        label="Choose File"
+                                                        name="image-file"
                                                         onChange={uploadFileHandler}
                                                         className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                                                     />
@@ -269,9 +316,11 @@ const ProfilePage = () => {
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">New Password</label>
+                                        <label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">New Password</label>
                                         <input
                                             type="password"
+                                            id="password"
+                                            name="password"
                                             placeholder="Leave blank to keep current"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -280,9 +329,11 @@ const ProfilePage = () => {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm Password</label>
+                                        <label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm Password</label>
                                         <input
                                             type="password"
+                                            id="confirmPassword"
+                                            name="confirmPassword"
                                             placeholder="Confirm new password"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -291,6 +342,79 @@ const ProfilePage = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Admin Shop Location & Proof Component */}
+                            {isAdmin && location.pathname.includes('/admin') && (
+                                <div className="pt-4 mt-2 border-t border-gray-100 dark:border-gray-800">
+                                    <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                        <FiMapPin className="text-primary-500" /> Shop Verification
+                                    </h4>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="shopLocationText" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Shop Address</label>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    id="shopLocationText"
+                                                    name="shopLocationText"
+                                                    placeholder="Enter shop address"
+                                                    value={shopLocationText}
+                                                    onChange={(e) => {
+                                                        if (!userInfo?.shopLocationText) setShopLocationText(e.target.value);
+                                                    }}
+                                                    readOnly={!!userInfo?.shopLocationText}
+                                                    disabled={!!userInfo?.shopLocationText}
+                                                    autoComplete="new-password"
+                                                    className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border ${userInfo?.shopLocationText ? 'border-green-300 dark:border-green-800 opacity-80 cursor-not-allowed text-gray-600 dark:text-gray-400' : 'border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white'} focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none shadow-sm`}
+                                                />
+                                                {userInfo?.shopLocationText && (
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center text-green-500">
+                                                        <FiShield className="w-5 h-5" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label htmlFor="proof-file" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Address Proof (Image)</label>
+                                            {!userInfo?.shopAddressProof ? (
+                                                <div className="flex flex-col gap-2">
+                                                    <input
+                                                        type="file"
+                                                        id="proof-file"
+                                                        name="proof-file"
+                                                        onChange={uploadProofHandler}
+                                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-white shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                                                    />
+                                                    {uploadingProof && <div className="text-sm text-primary-600 font-medium">Uploading proof...</div>}
+                                                    {shopAddressProof && (
+                                                        <div className="text-xs text-green-600 font-medium mt-1">Proof selected, please save.</div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="h-full">
+                                                    <div className="relative rounded-xl overflow-hidden border border-green-200 dark:border-green-800 w-full h-12 bg-green-50 dark:bg-green-900/20 flex flex-row items-center gap-2 px-4 shadow-sm opacity-80 cursor-not-allowed">
+                                                        <FiShield className="text-green-500 w-5 h-5 shrink-0" />
+                                                        <span className="text-sm text-green-700 dark:text-green-400 font-medium truncate">Proof Locked & Secured</span>
+                                                        <a href={userInfo.shopAddressProof} target="_blank" rel="noopener noreferrer" className="ml-auto text-xs text-primary-600 hover:underline">View</a>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {userInfo?.shopLocationText && userInfo?.shopAddressProof ? (
+                                        <p className="text-xs text-green-600 dark:text-green-500 mt-3 font-medium flex items-center gap-1">
+                                            <FiShield className="w-3 h-3" /> Shop verification details are securely locked and registered
+                                        </p>
+                                    ) : (
+                                        <p className="text-xs text-amber-600 dark:text-amber-500 mt-3 font-medium">
+                                            Note: Once submitted and saved, the shop address and proof document cannot be modified.
+                                        </p>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="pt-6 flex justify-end">
                                 <button type="submit" className="px-8 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-0.5 transition-all outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 min-w-[200px]">
@@ -301,6 +425,9 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+
+
+
         </div>
     );
 };

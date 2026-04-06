@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
@@ -18,6 +18,30 @@ const DeliveryDashboard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [isCodeVerified, setIsCodeVerified] = useState(
+        sessionStorage.getItem('deliveryCodeVerified') === 'true'
+    );
+    const [accessCodeInput, setAccessCodeInput] = useState('');
+    const [verifyingCode, setVerifyingCode] = useState(false);
+
+    const verifyCodeHandler = async () => {
+        if (!accessCodeInput || accessCodeInput.length !== 15) {
+            toast.error('Please enter a valid 15-digit code');
+            return;
+        }
+        setVerifyingCode(true);
+        try {
+            await axios.post('/api/delivery/access-code/verify', { code: accessCodeInput });
+            sessionStorage.setItem('deliveryCodeVerified', 'true');
+            setIsCodeVerified(true);
+            toast.success('Access Granted for 24 Hours');
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Invalid or expired code');
+        } finally {
+            setVerifyingCode(false);
+        }
+    };
 
     // Protect route: Redirect if not a delivery agent or admin
     if (!userInfo) {
@@ -121,6 +145,40 @@ const DeliveryDashboard = () => {
                                 className="w-full py-4 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transform hover:-translate-y-0.5 transition-all text-sm uppercase tracking-wider"
                             >
                                 Complete Profile Now
+                            </button>
+                        </motion.div>
+                    </div>
+                ) : (!isCodeVerified && !isProfileRoute && userInfo.role === 'delivery') ? (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-gray-50/90 dark:bg-dark-bg/90 backdrop-blur-sm p-8">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-white dark:bg-gray-800 p-10 rounded-[2rem] shadow-2xl border border-blue-100 dark:border-blue-900/30 max-w-lg w-full text-center relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-primary-500"></div>
+                            <div className="w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <FiClock className="w-12 h-12 text-blue-500" />
+                            </div>
+                            <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Security Gate</h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">
+                                Please enter the active 15-digit Daily Access Code provided by the System Admin to view and accept delivery orders.
+                            </p>
+                            
+                            <input
+                                type="text"
+                                value={accessCodeInput}
+                                onChange={(e) => setAccessCodeInput(e.target.value.toUpperCase())}
+                                maxLength={15}
+                                placeholder="ENTER 15 DIGIT CODE"
+                                className="w-full text-center tracking-[0.2em] font-mono font-bold text-xl px-4 py-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none focus:ring-2 focus:ring-blue-500 mb-6"
+                            />
+
+                            <button
+                                onClick={verifyCodeHandler}
+                                disabled={verifyingCode}
+                                className="w-full py-4 bg-gradient-to-r from-blue-600 to-primary-600 hover:from-blue-700 hover:to-primary-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transform hover:-translate-y-0.5 transition-all text-sm uppercase tracking-wider disabled:opacity-50"
+                            >
+                                {verifyingCode ? 'Verifying...' : 'Verify & Unlock System'}
                             </button>
                         </motion.div>
                     </div>

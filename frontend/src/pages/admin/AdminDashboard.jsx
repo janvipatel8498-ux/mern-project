@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../../utils/axiosInstance';
-import { FiUsers, FiShoppingBag, FiBox, FiList, FiSettings, FiPieChart, FiUserPlus, FiXCircle, FiUser, FiLogOut, FiUserCheck, FiTruck, FiMessageSquare, FiStar, FiHelpCircle } from 'react-icons/fi';
+import { FiUsers, FiShoppingBag, FiBox, FiList, FiSettings, FiPieChart, FiUserPlus, FiXCircle, FiUser, FiLogOut, FiUserCheck, FiTruck, FiMessageSquare, FiStar, FiHelpCircle, FiKey } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -52,6 +52,7 @@ const AdminDashboard = () => {
         { name: 'Onboarding', icon: <FiUserPlus />, path: 'vendor-requests' },
         { name: 'Partners', icon: <FiUserCheck />, path: 'vendors' },
         { name: 'Logistic Hub', icon: <FiTruck />, path: 'delivery-agents' },
+        { name: 'Access Code', icon: <FiKey />, path: 'delivery-code' },
         { name: 'Risk Control', icon: <FiXCircle />, path: 'cancelled' },
         { name: 'Reviews', icon: <FiStar />, path: 'vendor-reviews' },
         { name: 'Vnd Insight', icon: <FiMessageSquare />, path: 'support' },

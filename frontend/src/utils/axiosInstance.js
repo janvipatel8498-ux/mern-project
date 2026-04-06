@@ -12,8 +12,7 @@ axiosInstance.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             // If it's an auth error but we are NOT on the login page
             if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
-                localStorage.removeItem('userInfo');
-                localStorage.removeItem('expirationTime');
+                sessionStorage.removeItem('userInfo');
                 // Optional: window.location.href = '/login';
             }
         }

@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+    const navigate = useNavigate();
     return (
         <section className="relative bg-primary-50 dark:bg-dark-surface overflow-hidden pt-20 pb-32">
             <div className="container mx-auto px-4 relative z-10">
@@ -39,7 +40,7 @@ const HeroSection = () => {
                                 placeholder="Search for fresh groceries, essentials..."
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && e.target.value) {
-                                        window.location.href = `/products?keyword=${e.target.value}`;
+                                        navigate(`/products?keyword=${e.target.value}`);
                                     }
                                 }}
                                 className="block w-full pl-10 pr-3 py-4 border border-gray-200 dark:border-gray-700 rounded-2xl leading-5 bg-white dark:bg-dark-surface text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-lg shadow-lg"

@@ -86,6 +86,9 @@ export const loginUser = async (req, res, next) => {
                 shippingAddress: user.shippingAddress,
                 phoneNumber: user.phoneNumber,
                 panCardPhoto: user.panCardPhoto,
+                shopAddress: user.shopAddress,
+                shopLocationText: user.shopLocationText,
+                shopAddressProof: user.shopAddressProof,
             });
         } else {
             res.status(401);
@@ -103,6 +106,8 @@ export const logoutUser = (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
         expires: new Date(0),
+        secure: true,
+        sameSite: 'none',
     });
     res.status(200).json({ message: 'Logged out successfully' });
 };
@@ -153,6 +158,16 @@ export const updateUserProfile = async (req, res, next) => {
             if (req.body.password) {
                 user.password = req.body.password;
             }
+            
+            if (req.body.shopAddress !== undefined) {
+                user.shopAddress = req.body.shopAddress;
+            }
+            if (req.body.shopLocationText !== undefined) {
+                user.shopLocationText = req.body.shopLocationText;
+            }
+            if (req.body.shopAddressProof !== undefined) {
+                user.shopAddressProof = req.body.shopAddressProof;
+            }
 
             const updatedUser = await user.save();
 
@@ -166,7 +181,10 @@ export const updateUserProfile = async (req, res, next) => {
                 avatar: updatedUser.avatar,
                 isOnline: updatedUser.isOnline,
                 phoneNumber: updatedUser.phoneNumber,
-                panCardPhoto: updatedUser.panCardPhoto
+                panCardPhoto: updatedUser.panCardPhoto,
+                shopAddress: updatedUser.shopAddress,
+                shopLocationText: updatedUser.shopLocationText,
+                shopAddressProof: updatedUser.shopAddressProof
             });
         } else {
             res.status(404);

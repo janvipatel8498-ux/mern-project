@@ -73,7 +73,7 @@ const Header = () => {
                             {/* Dropdown menu */}
                             <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-xl shadow-lg border border-gray-100 dark:border-dark-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100">
                                 <div className="py-2">
-                                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800">Profile</Link>
+                                    <Link to={userInfo.role === 'admin' ? '/admin/dashboard/profile' : '/profile'} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800">Profile</Link>
                                     {userInfo.role === 'vendor' && (
                                         <Link to="/vendor/dashboard" className="block px-4 py-2 text-sm text-primary-600 font-bold hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-900/10">Vendor Dashboard</Link>
                                     )}
@@ -146,7 +146,7 @@ const Header = () => {
                                 {userInfo ? (
                                     <>
                                         <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
-                                        <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 p-3 bg-primary-50 dark:bg-primary-900/10 rounded-2xl">
+                                        <Link to={userInfo.role === 'admin' ? '/admin/dashboard/profile' : '/profile'} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 p-3 bg-primary-50 dark:bg-primary-900/10 rounded-2xl">
                                             <img
                                                 src={`https://ui-avatars.com/api/?name=${userInfo.name}&background=random&color=fff&length=1`}
                                                 alt="avatar"

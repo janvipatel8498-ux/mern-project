@@ -41,6 +41,7 @@ import SupportTicketManager from './components/admin/SupportTicketManager';
 import AdminVendorReviews from './components/admin/AdminVendorReviews';
 import UserSupportManager from './components/admin/UserSupportManager';
 import TaxManagementPage from './pages/admin/TaxManagementPage';
+import AdminDeliveryAccess from './components/admin/AdminDeliveryAccess';
 
 // Vendor Components
 import VendorOverview from './components/vendor/VendorOverview';
@@ -94,6 +95,7 @@ function App() {
             <Route path="vendor-requests" element={<VendorRequestManager />} />
             <Route path="vendors" element={<VendorManager />} />
             <Route path="delivery-agents" element={<DeliveryAgentManager />} />
+            <Route path="delivery-code" element={<AdminDeliveryAccess />} />
             <Route path="products" element={<ProductManager />} />
             <Route path="orders" element={<OrderManager />} />
             <Route path="reports" element={<ReportsView />} />
