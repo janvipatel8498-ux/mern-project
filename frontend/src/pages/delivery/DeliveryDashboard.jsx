@@ -20,7 +20,7 @@ const DeliveryDashboard = () => {
     const location = useLocation();
 
     const [isCodeVerified, setIsCodeVerified] = useState(
-        sessionStorage.getItem('deliveryCodeVerified') === 'true'
+        sessionStorage.getItem(`deliveryCodeVerified_${userInfo?._id}`) === 'true'
     );
     const [accessCodeInput, setAccessCodeInput] = useState('');
     const [verifyingCode, setVerifyingCode] = useState(false);
@@ -33,7 +33,7 @@ const DeliveryDashboard = () => {
         setVerifyingCode(true);
         try {
             await axios.post('/api/delivery/access-code/verify', { code: accessCodeInput });
-            sessionStorage.setItem('deliveryCodeVerified', 'true');
+            sessionStorage.setItem(`deliveryCodeVerified_${userInfo?._id}`, 'true');
             setIsCodeVerified(true);
             toast.success('Access Granted for 24 Hours');
         } catch (error) {
